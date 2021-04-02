@@ -88,6 +88,10 @@ chown http:http /etc/fstab
 chown -R http:http /etc/netctl /etc/systemd/network /srv/http
 chmod 755 /srv/http/* /srv/http/bash/* /srv/http/settings/*
 
+nproc=$( nproc )
+if [[ $nproc -lt 4 ]]; then
+	sed -i "s/taskset -c 3/taskset -c $((nproc - 1))/" /etc/systemd/system/*.service.d/override.conf
+fi
 if [[ -n $rpi01 ]]; then
 	sed -i '/^.Service/,$ d' /etc/systemd/system/mpd.service.d/override.conf
 	sed -i '/ExecStart=/ d' /etc/systemd/system/spotifyd.service.d/override.conf
